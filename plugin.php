@@ -1,11 +1,11 @@
 <?php
 
 return array(
-    'id' =>             'auth:openid-MS',
-    'version' =>        '0.2',
-    'name' =>           'OpenID Authentication for Microsoft',
-    'author' =>         'CBA Solutions',
-    'description' =>    'Provides an openID authentication backend',
-    'url' =>            'https://github.com/cbasolutions/osTicket-plugins/auth-openid-MS',
-    'plugin' =>         'authentication.php:OpenIDAuthMS',
+    'id' => 'auth:azuread',
+    'version' => '0.1',
+    'name' => 'Azure AD Authentication',
+    'author' => 'University of Bucharest',
+    'description' => 'Provides an Azure AD authentication backend',
+    'url' => 'https://gitlab.com/unibuc/directia-itc/osticket-aad-authentication',
+    'plugin' => 'authentication.php:OpenIDAuthMS',
 );
