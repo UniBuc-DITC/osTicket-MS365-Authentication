@@ -1,5 +1,9 @@
 <?php
 
+require __DIR__ . '/vendor/autoload.php';
+
+use Jumbojett\OpenIDConnectClient;
+
 class MicrosoftProviderAuth {
 
   var $config;
@@ -24,8 +28,20 @@ class MicrosoftProviderAuth {
       header('Location: ' . $authUrl);
       exit;
     } else {
-      //TDOD - Implement real JWT validation
-      $jwt = explode('.', $_REQUEST['id_token']);
+      $jwt = $_REQUEST['id_token'];
+
+      $oidc = new OpenIDConnectClient(
+        $this->config->get('AUTHORITY_URL'),
+        $clientId,
+        $clientSecret,
+      );
+
+      if (!$oidc->verifyJWTsignature($jwt)) {
+        echo('Token de autentificare invalid.');
+        exit;
+      }
+
+      $jwt = explode('.', $jwt);
       $authInfo = json_decode(base64_decode($jwt[1]), true);
       $_SESSION[':openid-ms']['name'] = $authInfo['name'];
       $_SESSION[':openid-ms']['oid'] = $authInfo['oid'];
@@ -172,7 +188,7 @@ class MicrosoftOpenIDStaffAuthBackend extends ExternalStaffAuthenticationBackend
       }
     }
   }
-  
+
   static function signOut($user) {
     parent::signOut($user);
     unset($_SESSION[':openid-ms']);

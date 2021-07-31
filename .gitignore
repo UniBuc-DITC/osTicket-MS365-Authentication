@@ -1,0 +1,2 @@
+# Don't commit packages installed through Composer.
+/vendor/
