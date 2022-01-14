@@ -51,8 +51,13 @@ class MicrosoftProviderAuth {
         $_SESSION[':openid-ms']['email'] = $authInfo['preferred_username'];
       }
       $_SESSION[':openid-ms']['nonce'] = $authInfo['nonce'];
-      if ($_COOKIE['LOGIN_TYPE'] === 'CLIENT') header('Location: /login.php');
-      if ($_COOKIE['LOGIN_TYPE'] === 'STAFF') header('Location: /scp/login.php');
+
+      if($this->login_type == 'CLIENT') {
+        Http::redirect(ROOT_PATH . 'home.php');
+      } else if($this->login_type == 'STAFF') {
+        Http::redirect(ROOT_PATH . 'scp/login.php');
+      }
+
       exit;
     }
   }
