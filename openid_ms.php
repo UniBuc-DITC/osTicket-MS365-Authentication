@@ -24,6 +24,7 @@ class MicrosoftProviderAuth {
     $resourceUrl = $this->config->get('RESOURCE_ID') . $this->config->get('RESOURCE_ENDPOINT');
     $nonce = $_COOKIE['OSTSESSID'];
     if (!isset($_REQUEST['id_token'])) {
+      echo 'Redirecting to MS365 authentication page...';
       $authUrl = $this->config->get('AUTHORITY_URL') . $this->config->get('AUTHORIZE_ENDPOINT') . '?client_id='. $clientId . '&response_type=id_token%20code&redirect_uri=' . $redirectUri . '&response_mode=form_post&scope=' . $scopes . '&state=12345&nonce=' . $nonce;
       header('Location: ' . $authUrl);
       exit;
@@ -53,8 +54,10 @@ class MicrosoftProviderAuth {
       $_SESSION[':openid-ms']['nonce'] = $authInfo['nonce'];
 
       if($this->login_type == 'CLIENT') {
+        echo 'Redirecting to client home page';
         Http::redirect(ROOT_PATH . 'home.php');
       } else if($this->login_type == 'STAFF') {
+        echo 'Redirecting to staff home page';
         Http::redirect(ROOT_PATH . 'scp/login.php');
       }
 
