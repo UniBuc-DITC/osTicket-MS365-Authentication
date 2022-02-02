@@ -14,6 +14,8 @@ class MicrosoftProviderAuth {
   }
 
   function triggerAuth() {
+    error_log('Performing authentication using MS365');
+
     global $ost;
     $self = $this;
 
@@ -29,6 +31,8 @@ class MicrosoftProviderAuth {
       header('Location: ' . $authUrl);
       exit;
     } else {
+      error_log('Validating ID token');
+
       $jwt = $_REQUEST['id_token'];
 
       $oidc = new OpenIDConnectClient(
@@ -42,6 +46,8 @@ class MicrosoftProviderAuth {
         exit;
       }
 
+      error_log('MS365 ID token is valid, constructing user session');
+
       $jwt = explode('.', $jwt);
       $authInfo = json_decode(base64_decode($jwt[1]), true);
       $_SESSION[':openid-ms']['name'] = $authInfo['name'];
@@ -53,12 +59,17 @@ class MicrosoftProviderAuth {
       }
       $_SESSION[':openid-ms']['nonce'] = $authInfo['nonce'];
 
-      if($this->login_type == 'CLIENT') {
+      $login_type = $_SESSION['ext:bk:login_type'];
+      error_log('Performing redirect for login type ' . $login_type);
+
+      if ($login_type == 'CLIENT') {
         echo 'Redirecting to client home page';
-        Http::redirect(ROOT_PATH . 'home.php');
-      } else if($this->login_type == 'STAFF') {
+        Http::redirect(ROOT_PATH . 'index.php');
+      } else if ($login_type == 'STAFF') {
         echo 'Redirecting to staff home page';
         Http::redirect(ROOT_PATH . 'scp/login.php');
+      } else {
+        echo 'Invalid login type!';
       }
 
       exit;
@@ -67,7 +78,7 @@ class MicrosoftProviderAuth {
 }
 class MicrosoftOpenIDClientAuthBackend extends ExternalUserAuthenticationBackend {
   static $id = "openid_ms.client";
-  static $name = "Micrsoft OpenID Auth - Client";
+  static $name = "Microsoft OpenID Auth - Client";
 
   static $sign_in_image_url = "https://docs.microsoft.com/en-us/azure/active-directory/develop/media/active-directory-branding-guidelines/sign-in-with-microsoft-light.png";
   static $service_name = "Microsoft OpenID Auth - Client";
@@ -75,7 +86,7 @@ class MicrosoftOpenIDClientAuthBackend extends ExternalUserAuthenticationBackend
 function __construct($config) {
   $this->config = $config;
   if ($_SERVER['SCRIPT_NAME'] === '/login.php' || $_SERVER['SCRIPT_NAME'] === '/open.php') {
-    setcookie('LOGIN_TYPE','CLIENT', time() + 180, "/");
+    $_SESSION['ext:bk:login_type'] = 'CLIENT';
     if ($this->config->get('HIDE_LOCAL_CLIENT_LOGIN')) {
       if ($this->config->get('PLUGIN_ENABLED_AWESOME')) {
         ?>
@@ -159,7 +170,7 @@ class MicrosoftOpenIDStaffAuthBackend extends ExternalStaffAuthenticationBackend
     $this->config = $config;
     $sign_in_image_url = $this->config->get('LOGIN_LOGO');
     if ($_SERVER['SCRIPT_NAME'] === '/scp/login.php') {
-      setcookie('LOGIN_TYPE','STAFF', time() + 180, "/");
+      $_SESSION['ext:bk:login_type'] = 'STAFF';
       if ($this->config->get('HIDE_LOCAL_STAFF_LOGIN')) {
         ?>
         <script>window.onload = function() {
