@@ -64,7 +64,7 @@ class MicrosoftProviderAuth {
 
       if ($login_type == 'CLIENT') {
         echo 'Redirecting to client home page';
-        Http::redirect(ROOT_PATH . 'index.php');
+        Http::redirect(ROOT_PATH . 'home.php');
       } else if ($login_type == 'STAFF') {
         echo 'Redirecting to staff home page';
         Http::redirect(ROOT_PATH . 'scp/login.php');
