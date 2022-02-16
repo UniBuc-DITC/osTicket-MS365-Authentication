@@ -1,6 +1,6 @@
-# osTicket plugin for Azure AD authentication
+# osTicket plugin for Microsoft 365 authentication
 
-This repository provides an [osTicket](https://osticket.com/) plugin for authentication using [Azure Active Directory](https://azure.microsoft.com/en-us/services/active-directory/) accounts.
+This repository provides an [osTicket](https://osticket.com/) plugin for authentication using Microsoft 365 accounts, registerd in an [Azure Active Directory](https://azure.microsoft.com/en-us/services/active-directory/) tenant.
 
 ## Motivation
 
