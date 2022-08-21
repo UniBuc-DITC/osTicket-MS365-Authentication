@@ -69,8 +69,8 @@ class OpenIDAuthMSPluginConfig extends PluginConfig {
       )),*/
       'SCOPES' => new TextboxField(array(
         'label' => $__('Scopes'),
-        'required'=>true,
-        'hint' => $__('The basic (and required) scope for OpenID Connect is the openid scope. This is space delimited. E.g., openid profile'),
+        'required'=> true,
+        'hint' => $__('The basic (and required) scopes for OpenID Connect are the `openid` and `profile` scopes. This field is space delimited. E.g., openid profile'),
         'configuration' => array('size'=>60, 'length'=>100),
       )),
       'ALLOWED_STAFF_DOMAINS' => new TextboxField(array(
