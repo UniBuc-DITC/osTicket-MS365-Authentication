@@ -22,14 +22,19 @@ class OpenIDAuthMSPluginConfig extends PluginConfig {
             'MSAUTH' => new SectionBreakField(array(
                 'label' => $__('Microsoft OpenID Provider Configuration'),
             )),
+            'TENANT_ID' => new TextboxField(array(
+                'label' => $__('Tenant ID'),
+                'required' => true,
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
             'CLIENT_ID' => new TextboxField(array(
                 'label' => $__('Client ID'),
-                'required'=>true,
+                'required' => true,
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             'CLIENT_SECRET' => new TextboxField(array(
                 'label' => $__('Client Secret'),
-                'required'=>true,
+                'required' => true,
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             /*'LOGIN_LOGO' => new TextboxField(array(
