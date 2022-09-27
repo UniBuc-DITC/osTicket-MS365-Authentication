@@ -18,3 +18,7 @@ composer install
 ```
 
 You can then enable the plugin in your osTicket admin dashboard.
+
+## Credits
+
+- [User icon created by Freepik - Flaticon](https://www.flaticon.com/free-icons/user)

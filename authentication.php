@@ -61,22 +61,30 @@ class OpenIDAuthMS extends Plugin {
                         return;
                     }
 
+                    // Convert the e-mail address to a valid file name
                     $sanitizedEmail = str_replace('@', '_', $email);
 
-                    $contentItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content');
-                    $contentTypeItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content_Type');
+                    $contentCacheItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content');
+                    $contentTypeCacheItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content_Type');
 
                     // We want these profile pictures to be cached for up to one week.
-                    $profilePictureExpirationTime = 604800;
+                    $profilePictureExpirationTime = 604_800;
 
-                    if ($contentItem->isHit()) {
-                        $content = $contentItem->get();
-                        $contentType = $contentTypeItem->get();
+                    if ($contentCacheItem->isHit()) {
+                        $content = $contentCacheItem->get();
+
+                        // User doesn't have a profile picture defined, use the fallback image
+                        if (empty($content)) {
+                            $content = file_get_contents(__DIR__ . '/images/user.png');
+                            $contentType = 'image/png';
+                        } else {
+                            $contentType = $contentTypeCacheItem->get();
+                        }
                     } else {
                         $accessToken = $clientApp->acquireToken();
 
                         $guzzle = new GuzzleHttp\Client();
-                        $url = 'https://graph.microsoft.com/v1.0/users/' . $email . '/photo/$value';
+                        $url = 'https://graph.microsoft.com/v1.0/users/' . $email . '/photos/96x96/$value';
 
                         try {
                             $response = $guzzle->get($url, [
@@ -84,27 +92,39 @@ class OpenIDAuthMS extends Plugin {
                                     'Authorization' => "Bearer $accessToken"
                                 ]
                             ]);
+
+                            $content = $response->getBody();
+                            $contentType = $response->getHeader('Content-Type');
+
+                            $cachedContent = $content->getContents();
+                            $cachedContentType = $contentType;
                         } catch (GuzzleHttp\Exception\ClientException $clientException) {
                             $code = $clientException->getCode();
-                            error_log($clientException->getMessage());
-                            echo "Failed to fetch user's profile picture; error code $code";
-                            return;
+                            if ($code == 404) {
+                                $content = file_get_contents(__DIR__ . '/images/user.png');
+                                $contentType = 'image/png';
+
+                                $cachedContent = '';
+                                $cachedContentType = $contentType;
+                            } else {
+                                error_log($clientException->getMessage());
+                                echo "Failed to fetch user's profile picture; error code $code";
+                                return;
+                            }
                         }
 
-                        $content = $response->getBody();
-                        $contentType = $response->getHeader('Content-Type');
+                        $contentCacheItem->set($cachedContent);
+                        $contentCacheItem->expiresAfter($profilePictureExpirationTime);
+                        $filesystemPool->save($contentCacheItem);
 
-                        $contentItem->set($content->getContents());
-                        $contentItem->expiresAfter($profilePictureExpirationTime);
-                        $filesystemPool->save($contentItem);
-
-                        $contentTypeItem->set($contentType);
-                        $contentTypeItem->expiresAfter($profilePictureExpirationTime);
-                        $filesystemPool->save($contentTypeItem);
+                        $contentTypeCacheItem->set($cachedContentType);
+                        $contentTypeCacheItem->expiresAfter($profilePictureExpirationTime);
+                        $filesystemPool->save($contentTypeCacheItem);
                     }
 
                     header('Content-Type: ' . $contentType);
                     header('Cache-Control: private, max-age=' . $profilePictureExpirationTime);
+                    header_remove('Expires');
                     header_remove('Pragma');
 
                     echo $content;
