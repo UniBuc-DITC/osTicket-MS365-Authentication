@@ -63,6 +63,7 @@ class OpenIDAuthMS extends Plugin {
 
                     // Convert the e-mail address to a valid file name
                     $sanitizedEmail = str_replace('@', '_', $email);
+                    $sanitizedEmail = str_replace('-', '_', $sanitizedEmail);
 
                     $contentCacheItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content');
                     $contentTypeCacheItem = $filesystemPool->getItem('MS365_Avatar_' . $sanitizedEmail . '_Content_Type');
