@@ -6,10 +6,9 @@ class Microsoft365AvatarSource
 extends AvatarSource {
     static $name = 'Microsoft 365';
     static $id = 'ms365';
-    var $mode;
 
     function __construct($mode=null) {
-        $this->mode = $mode ?: 'default';
+        parent::__construct($mode ?: 'default');
     }
 
     static function getModes() {
@@ -26,7 +25,7 @@ AvatarSource::register('Microsoft365AvatarSource');
 
 class Microsoft365Avatar
 extends Avatar {
-    var $email;
+    var string $email;
 
     function __construct($user) {
         parent::__construct($user);
