@@ -22,14 +22,19 @@ class OpenIDAuthMSPluginConfig extends PluginConfig {
             'MSAUTH' => new SectionBreakField(array(
                 'label' => $__('Microsoft OpenID Provider Configuration'),
             )),
+            'TENANT_ID' => new TextboxField(array(
+                'label' => $__('Tenant ID'),
+                'required' => true,
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
             'CLIENT_ID' => new TextboxField(array(
                 'label' => $__('Client ID'),
-                'required'=>true,
+                'required' => true,
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             'CLIENT_SECRET' => new TextboxField(array(
                 'label' => $__('Client Secret'),
-                'required'=>true,
+                'required' => true,
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             /*'LOGIN_LOGO' => new TextboxField(array(
@@ -74,12 +79,17 @@ class OpenIDAuthMSPluginConfig extends PluginConfig {
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             'ALLOWED_STAFF_DOMAINS' => new TextboxField(array(
-                'label' => $__('Allowed email domains for staff'),
+                'label' => $__('Allowed e-mail domains for staff'),
                 'hint' => $__('Comma separated values are supported.'),
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
             'ALLOWED_CLIENT_DOMAINS' => new TextboxField(array(
-                'label' => $__('Allowed email domains for clients'),
+                'label' => $__('Allowed e-mail domains for clients'),
+                'hint' => $__('Comma separated values are supported.'),
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
+            'ALLOWED_AVATAR_DOMAINS' => new TextboxField(array(
+                'label' => $__('Allowed e-mail domains for avatar lookup'),
                 'hint' => $__('Comma separated values are supported.'),
                 'configuration' => array('size'=>60, 'length'=>100),
             )),

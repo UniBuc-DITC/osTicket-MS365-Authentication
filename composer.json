@@ -1,5 +1,14 @@
 {
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
     "require": {
-        "jumbojett/openid-connect-php": "^0.9.8"
+        "jumbojett/openid-connect-php": "^0.9.8",
+        "guzzlehttp/guzzle": "^7.0",
+        "cache/filesystem-adapter": "^1.2",
+        "cache/apcu-adapter": "^1.2",
+        "cache/chain-adapter": "^1.2"
     }
 }
