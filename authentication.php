@@ -21,8 +21,6 @@ class OpenIDAuthMS extends Plugin {
                 new MicrosoftOpenIDClientAuthBackend($this->getConfig()));
         }
 
-        require_once('microsoft_graph.php');
-
         $this->bootstrapAvatarSource($config);
     }
 
@@ -32,6 +30,7 @@ class OpenIDAuthMS extends Plugin {
         $clientSecret = $config->get('CLIENT_SECRET');
         $allowedDomains = explode(',', $config->get('ALLOWED_AVATAR_DOMAINS'));
 
+        // Cannot activate this feature if the required configuration keys are missing
         if (is_null($tenantId) || is_null($clientId) || is_null($clientSecret)) {
             return;
         }
@@ -49,6 +48,8 @@ class OpenIDAuthMS extends Plugin {
             $apcuPool = new Cache\Adapter\Apcu\ApcuCachePool();
             $credentialsCachePool = new Cache\Adapter\Chain\CachePoolChain([$apcuPool, $filesystemPool]);
         }
+
+        require_once('microsoft_graph.php');
 
         $clientApp = new ConfidentialClientApplication($tenantId, $clientId, $clientSecret, $credentialsCachePool);
 

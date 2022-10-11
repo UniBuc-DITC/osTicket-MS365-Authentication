@@ -1,9 +1,14 @@
 <?php
 
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\SimpleCache\CacheInterface;
 
 require_once('microsoft_graph.php');
 
+/**
+ * Implements the loading of profile pictures from Microsoft Graph,
+ * by registering a new `GET` route, `/api/ms365-avatar/<user-email>`.
+ */
 class AvatarLoader {
     private CacheInterface $cachePool;
     private ConfidentialClientApplication $clientApp;
@@ -20,6 +25,11 @@ class AvatarLoader {
         $this->allowedDomains = array_map('strtolower', $allowedDomains);
     }
 
+    /**
+     * Registers the API handler for the avatar loading route.
+     *
+     * @return void
+     */
     function bootstrap() {
         Signal::connect('api', function($dispatcher) {
             $dispatcher->append(
@@ -28,7 +38,14 @@ class AvatarLoader {
         });
     }
 
-    function handleGetAvatarRequest($email) {
+    /**
+     * Processes an avatar loading request received from the client.
+     *
+     * @param $email string The e-mail address of the user to load the profile picture for.
+     * @return void
+     * @throws GuzzleException
+     */
+    function handleGetAvatarRequest(string $email) {
         $currentUser = UserAuthenticationBackend::getUser() ?? StaffAuthenticationBackend::getUser();
 
         if (is_null($currentUser)) {
@@ -106,12 +123,12 @@ class AvatarLoader {
         $this->sendResponse($contentType, $content);
     }
 
-    function sendFallbackPictureResponse() {
+    private function sendFallbackPictureResponse() {
         $content = file_get_contents(__DIR__ . '/images/user.png');
         $this->sendResponse('image/png', $content);
     }
 
-    function sendResponse($contentType, $content) {
+    private function sendResponse($contentType, $content) {
         header('Content-Type: ' . $contentType);
         header('Cache-Control: private, max-age=' . self::$profilePictureExpirationTime);
         header_remove('Expires');

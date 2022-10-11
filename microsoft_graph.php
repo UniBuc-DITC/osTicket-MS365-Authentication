@@ -1,8 +1,14 @@
 <?php
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Cache\CacheItemPoolInterface;
 
+/**
+ * Provides support for acquiring Microsoft Graph access tokens using the confidential client application sign-in flow.
+ *
+ * @link https://learn.microsoft.com/en-us/dotnet/api/microsoft.identity.client.confidentialclientapplication?view=azure-dotnet-preview Original API which inspired this class.
+ */
 class ConfidentialClientApplication {
     private string $tenantId;
     private string $clientId;
@@ -21,6 +27,8 @@ class ConfidentialClientApplication {
      * Obtains an access token for Microsoft Graph using the client credentials flow.
      *
      * @return string The access token
+     *
+     * @throws GuzzleException If there's an error with the network request.
      */
     function acquireToken(): string {
         $item = $this->pool->getItem('MS365_ConfidentialClientAccessToken');
