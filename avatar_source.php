@@ -25,11 +25,11 @@ AvatarSource::register('Microsoft365AvatarSource');
 
 class Microsoft365Avatar
 extends Avatar {
-    var string $email;
+    var ?string $email;
 
     function __construct($user) {
         parent::__construct($user);
-        $this->email = $user->getEmail();
+        $this->email = $user->getEmail() ?? '';
     }
 
     function getUrl($size) {

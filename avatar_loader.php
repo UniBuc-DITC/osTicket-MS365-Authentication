@@ -33,7 +33,7 @@ class AvatarLoader {
     function bootstrap() {
         Signal::connect('api', function($dispatcher) {
             $dispatcher->append(
-                url_get('^/ms365-avatar/(?P<email>.+)$', array($this, 'handleGetAvatarRequest'))
+                url_get('^/ms365-avatar/(?P<email>.*)$', array($this, 'handleGetAvatarRequest'))
             );
         });
     }
@@ -41,15 +41,21 @@ class AvatarLoader {
     /**
      * Processes an avatar loading request received from the client.
      *
-     * @param $email string The e-mail address of the user to load the profile picture for.
+     * @param $email ?string The e-mail address of the user to load the profile picture for.
      * @return void
      * @throws GuzzleException
      */
-    function handleGetAvatarRequest(string $email) {
+    function handleGetAvatarRequest(?string $email) {
         $currentUser = UserAuthenticationBackend::getUser() ?? StaffAuthenticationBackend::getUser();
 
         if (is_null($currentUser)) {
             echo 'Unauthenticated!';
+            return;
+        }
+
+        // If no e-mail has been provided, return the fallback image.
+        if (is_null($email)) {
+            $this->sendFallbackPictureResponse();
             return;
         }
 
