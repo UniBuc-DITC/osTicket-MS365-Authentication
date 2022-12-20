@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__.'/vendor/autoload.php');
 require_once(INCLUDE_DIR.'class.plugin.php');
 require_once('config.php');
 
