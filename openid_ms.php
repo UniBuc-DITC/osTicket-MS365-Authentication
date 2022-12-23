@@ -19,6 +19,8 @@ class MicrosoftProviderAuth {
         global $ost;
         $self = $this;
 
+        $login_type = $_SESSION['ext:bk:login_type'];
+
         $redirectUri = rawurlencode(rtrim($ost->getConfig()->getURL(), '/') . '/api/auth/ext');
         $clientId = $this->config->get('CLIENT_ID');
         $clientSecret = $this->config->get('CLIENT_SECRET');
@@ -26,7 +28,7 @@ class MicrosoftProviderAuth {
         $resourceUrl = $this->config->get('RESOURCE_ID') . $this->config->get('RESOURCE_ENDPOINT');
         $nonce = $_COOKIE['OSTSESSID'];
         if (!isset($_REQUEST['id_token'])) {
-            $authUrl = $this->config->get('AUTHORITY_URL') . $this->config->get('AUTHORIZE_ENDPOINT') . '?client_id='. $clientId . '&response_type=id_token%20code&redirect_uri=' . $redirectUri . '&response_mode=form_post&scope=' . $scopes . '&state=12345&nonce=' . $nonce;
+            $authUrl = $this->config->get('AUTHORITY_URL') . $this->config->get('AUTHORIZE_ENDPOINT') . '?client_id='. $clientId . '&response_type=id_token%20code&redirect_uri=' . $redirectUri . '&response_mode=form_post&scope=' . $scopes . '&state=' . $login_type . '&nonce=' . $nonce;
             header('Location: ' . $authUrl);
             echo 'Redirecting to MS365 authentication page...';
             exit;
@@ -60,7 +62,6 @@ class MicrosoftProviderAuth {
             }
             $_SESSION[':openid-ms']['nonce'] = $authInfo['nonce'];
 
-            $login_type = $_SESSION['ext:bk:login_type'];
             error_log('Performing redirect for login type ' . $login_type);
 
             if ($login_type == 'CLIENT') {
